@@ -4,8 +4,8 @@
     <groupId>de.computerlyrik.roo.addon.copy</groupId>
     <artifactId>de.computerlyrik.roo.addon.copy</artifactId>
     <packaging>bundle</packaging>
-    <version>0.1.0.BUILD-SNAPSHOT</version>
-    <name>de-computerlyrik-roo-addon-copy</name>
+    <version>0</version>
+    <name>addon-copy</name>
     <organization>
         <name>Your project/company name goes here (used in copyright and vendor information in the manifest)</name>
     </organization>

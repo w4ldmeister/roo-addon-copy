@@ -22,5 +22,6 @@ public interface CopyOperations {
      * Annotate the provided Java type with the trigger of this add-on
      */
     void annotateType(JavaType type,Set<String> excludeFields);
-    
+    void setup();
+
 }

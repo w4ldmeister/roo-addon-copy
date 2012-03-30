@@ -1,15 +1,22 @@
 package de.computerlyrik.roo.addon.copy;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.felix.scr.annotations.Reference;
 import org.springframework.roo.classpath.PhysicalTypeIdentifierNamingUtils;
 import org.springframework.roo.classpath.PhysicalTypeMetadata;
+import org.springframework.roo.classpath.TypeLocationService;
+import org.springframework.roo.classpath.details.ClassOrInterfaceTypeDetails;
 import org.springframework.roo.classpath.details.FieldMetadata;
 import org.springframework.roo.classpath.details.FieldMetadataBuilder;
+import org.springframework.roo.classpath.details.MemberFindingUtils;
 import org.springframework.roo.classpath.details.MethodMetadata;
 import org.springframework.roo.classpath.details.MethodMetadataBuilder;
 import org.springframework.roo.classpath.details.annotations.AnnotatedJavaType;
@@ -28,6 +35,8 @@ import org.springframework.roo.project.LogicalPath;
  * @since 1.1.0
  */
 public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
+	
+    @Reference private TypeLocationService typeLocationService;
 
     // Constants
     private static final String PROVIDES_TYPE_STRING = CopyMetadata.class.getName();
@@ -56,39 +65,17 @@ public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
     public CopyMetadata(String identifier, JavaType aspectName, PhysicalTypeMetadata governorPhysicalTypeMetadata) {
         super(identifier, aspectName, governorPhysicalTypeMetadata);
         Validate.isTrue(isValid(identifier), "Metadata identification string '" + identifier + "' does not appear to be a valid");
-
-        // Adding a new sample field definition
-        builder.addField(getSampleField());
             
         // Adding a new sample method definition
-        builder.addMethod(getSampleMethod());
+        builder.addMethod(getCopyMethod());
         
         // Create a representation of the desired output ITD
         itdTypeDetails = builder.build();
     }
     
-    /**
-     * Create metadata for a field definition. 
-     *
-     * @return a FieldMetadata object
-     */
-    private FieldMetadata getSampleField() {
-        // Note private fields are private to the ITD, not the target type, this is undesirable if a dependent method is pushed in to the target type
-        int modifier = 0;
-        
-        // Using the FieldMetadataBuilder to create the field definition. 
-        final FieldMetadataBuilder fieldBuilder = new FieldMetadataBuilder(getId(), // Metadata ID provided by supertype
-            modifier, // Using package protection rather than private
-            new ArrayList<AnnotationMetadataBuilder>(), // No annotations for this field
-            new JavaSymbolName("sampleField"), // Field name
-            JavaType.STRING); // Field type
-        
-        return fieldBuilder.build(); // Build and return a FieldMetadata instance
-    }
-    
-    private MethodMetadata getSampleMethod() {
+    private MethodMetadata getCopyMethod() {
         // Specify the desired method name
-        JavaSymbolName methodName = new JavaSymbolName("sampleMethod");
+        JavaSymbolName methodName = new JavaSymbolName("copy");
         
         // Check if a method with the same signature already exists in the target type
         final MethodMetadata method = methodExists(methodName, new ArrayList<AnnotatedJavaType>());
@@ -105,16 +92,55 @@ public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
         
         // Define method parameter types (none in this case)
         List<AnnotatedJavaType> parameterTypes = new ArrayList<AnnotatedJavaType>();
-        
+        parameterTypes.add(new AnnotatedJavaType(
+        		governorTypeDetails.getType()));
         // Define method parameter names (none in this case)
         List<JavaSymbolName> parameterNames = new ArrayList<JavaSymbolName>();
+        parameterNames.add(new JavaSymbolName(
+        		governorTypeDetails.getName().getSimpleTypeName().toLowerCase()));
         
         // Create the method body
         InvocableMemberBodyBuilder bodyBuilder = new InvocableMemberBodyBuilder();
-        bodyBuilder.appendFormalLine("System.out.println(\"Hello World\");");
         
+    	bodyBuilder.appendFormalLine(governorTypeDetails.getName().getSimpleTypeName()+" p = new " +
+    			governorTypeDetails.getName().getSimpleTypeName()+"();");
+
+        for (FieldMetadata field : governorTypeDetails.getDeclaredFields())
+        {
+        	String fieldName = field.getFieldName().getSymbolName();
+        	String getter = "get"+field.getFieldName().getSymbolNameCapitalisedFirstLetter();
+        	String setter = "set"+field.getFieldName().getSymbolNameCapitalisedFirstLetter();
+        	JavaType fieldType = field.getFieldType();
+        	ClassOrInterfaceTypeDetails citd;
+        	if (fieldType.isCommonCollectionType())
+        	{
+        		JavaType collectionType = fieldType.getParameters().get(0);
+        		System.out.println("got List with generic type:"+collectionType.toString());
+        		citd = typeLocationService.getTypeDetails(collectionType);
+        	    if (collectionType.isPrimitive()
+        	    		||citd != null 
+        	    		&& MemberFindingUtils.getAnnotationOfType(citd.getAnnotations(), new JavaType(RooCopy.class.getName())) != null)
+        		{
+        			bodyBuilder.appendFormalLine("for ( "+collectionType+" t : "+fieldName+" ) {");
+        			bodyBuilder.appendFormalLine("p."+getter+".add(t.copy());");
+        			bodyBuilder.appendFormalLine("}");
+        		} 
+        	}
+        	else 
+        	{
+        		citd = typeLocationService.getTypeDetails(fieldType);
+        	    if (fieldType.isPrimitive() 
+        	    		|| citd != null 
+        	    		&& MemberFindingUtils.getAnnotationOfType(citd.getAnnotations(), new JavaType(RooCopy.class.getName())) != null)
+        	    {
+        	    	bodyBuilder.appendFormalLine("p."+setter+"(this."+getter+"());");
+        	    }
+        	}
+        }
+    	bodyBuilder.appendFormalLine("return p;");
+
         // Use the MethodMetadataBuilder for easy creation of MethodMetadata
-        MethodMetadataBuilder methodBuilder = new MethodMetadataBuilder(getId(), Modifier.PUBLIC, methodName, JavaType.VOID_PRIMITIVE, parameterTypes, parameterNames, bodyBuilder);
+        MethodMetadataBuilder methodBuilder = new MethodMetadataBuilder(getId(), Modifier.PUBLIC, methodName, governorTypeDetails.getType() , parameterTypes, parameterNames, bodyBuilder);
         methodBuilder.setAnnotations(annotations);
         methodBuilder.setThrowsTypes(throwsTypes);
         

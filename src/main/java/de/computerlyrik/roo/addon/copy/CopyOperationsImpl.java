@@ -82,12 +82,12 @@ public class CopyOperationsImpl implements CopyOperations {
     /** {@inheritDoc} */
     public void setup() {
         // Install the add-on Google code repository needed to get the annotation 
-        projectOperations.addRepository("", new Repository("Copy Roo add-on repository", "Copy Roo add-on repository", "https://de-computerlyrik-roo-addon-copy.googlecode.com/svn/repo"));
+        //projectOperations.addRepository("", new Repository("Copy Roo add-on repository", "Copy Roo add-on repository", "https://de-computerlyrik-roo-addon-copy.googlecode.com/svn/repo"));
         
         List<Dependency> dependencies = new ArrayList<Dependency>();
         
         // Install the dependency on the add-on jar (
-        dependencies.add(new Dependency("de.computerlyrik.roo.addon.copy", "de.computerlyrik.roo.addon.copy", "0.1.0.BUILD-SNAPSHOT", DependencyType.JAR, DependencyScope.PROVIDED));
+        //dependencies.add(new Dependency("de.computerlyrik.roo.addon.copy", "de.computerlyrik.roo.addon.copy", "0.1.0.BUILD-SNAPSHOT", DependencyType.JAR, DependencyScope.PROVIDED));
         
         // Install dependencies defined in external XML file
         for (Element dependencyElement : XmlUtils.findElements("/configuration/batch/dependencies/dependency", XmlUtils.getConfiguration(getClass()))) {

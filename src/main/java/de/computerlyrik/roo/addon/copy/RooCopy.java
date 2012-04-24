@@ -13,5 +13,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
 public @interface RooCopy {
+	
+    /**
+	* @return an array of fields exclude in the copy method
+	*/
+    String[] excludeFields() default "";
 }
 

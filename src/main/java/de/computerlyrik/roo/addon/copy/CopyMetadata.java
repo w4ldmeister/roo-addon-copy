@@ -27,6 +27,7 @@ import org.springframework.roo.metadata.MetadataIdentificationUtils;
 import org.springframework.roo.model.JavaSymbolName;
 import org.springframework.roo.model.JavaType;
 import org.springframework.roo.project.LogicalPath;
+import org.springframework.roo.support.util.CollectionUtils;
 
 /**
  * This type produces metadata for a new ITD. It uses an {@link ItdTypeDetailsBuilder} provided by 
@@ -42,6 +43,8 @@ public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
     private static final String PROVIDES_TYPE_STRING = CopyMetadata.class.getName();
     private static final String PROVIDES_TYPE = MetadataIdentificationUtils.create(PROVIDES_TYPE_STRING);
 
+    private final List<FieldMetadata> locatedFields;
+    
     public static final String getMetadataIdentiferType() {
         return PROVIDES_TYPE;
     }
@@ -62,12 +65,16 @@ public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
         return PhysicalTypeIdentifierNamingUtils.isValid(PROVIDES_TYPE_STRING, metadataIdentificationString);
     }
     
-    public CopyMetadata(String identifier, JavaType aspectName, PhysicalTypeMetadata governorPhysicalTypeMetadata) {
+    public CopyMetadata(String identifier, JavaType aspectName, PhysicalTypeMetadata governorPhysicalTypeMetadata,  final List<FieldMetadata> locatedFields) {
         super(identifier, aspectName, governorPhysicalTypeMetadata);
+        
+        this.locatedFields = locatedFields;
         Validate.isTrue(isValid(identifier), "Metadata identification string '" + identifier + "' does not appear to be a valid");
             
-        // Adding a new sample method definition
-        builder.addMethod(getCopyMethod());
+        //test if locatedFields are empty
+        if (!CollectionUtils.isEmpty(locatedFields)) {
+            builder.addMethod(getCopyMethod());
+        }
         
         // Create a representation of the desired output ITD
         itdTypeDetails = builder.build();
@@ -105,7 +112,7 @@ public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
     	bodyBuilder.appendFormalLine(governorTypeDetails.getName().getSimpleTypeName()+" p = new " +
     			governorTypeDetails.getName().getSimpleTypeName()+"();");
 
-        for (FieldMetadata field : governorTypeDetails.getDeclaredFields())
+        for (FieldMetadata field : locatedFields)
         {
         	String fieldName = field.getFieldName().getSymbolName();
         	String getter = "get"+field.getFieldName().getSymbolNameCapitalisedFirstLetter();

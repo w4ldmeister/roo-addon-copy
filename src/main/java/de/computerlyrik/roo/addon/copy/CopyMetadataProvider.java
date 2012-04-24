@@ -1,14 +1,24 @@
 package de.computerlyrik.roo.addon.copy;
 
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
 import org.springframework.roo.classpath.PhysicalTypeIdentifier;
 import org.springframework.roo.classpath.PhysicalTypeMetadata;
+import org.springframework.roo.classpath.details.FieldMetadata;
 import org.springframework.roo.classpath.itd.AbstractItdMetadataProvider;
 import org.springframework.roo.classpath.itd.ItdTypeDetailsProvidingMetadataItem;
+import org.springframework.roo.classpath.scanner.MemberDetails;
 import org.springframework.roo.model.JavaType;
 import org.springframework.roo.project.LogicalPath;
+import org.springframework.roo.support.util.CollectionUtils;
 
 /**
  * Provides {@link CopyMetadata}. This type is called by Roo to retrieve the metadata for this add-on.
@@ -48,7 +58,19 @@ public final class CopyMetadataProvider extends AbstractItdMetadataProvider {
      */
     protected ItdTypeDetailsProvidingMetadataItem getMetadata(String metadataIdentificationString, JavaType aspectName, PhysicalTypeMetadata governorPhysicalTypeMetadata, String itdFilename) {
         // Pass dependencies required by the metadata in through its constructor
-        return new CopyMetadata(metadataIdentificationString, aspectName, governorPhysicalTypeMetadata);
+    	
+        final JavaType javaType = governorPhysicalTypeMetadata
+                .getMemberHoldingTypeDetails().getName();
+    	
+        final MemberDetails memberDetails = getMemberDetails(governorPhysicalTypeMetadata);
+        if (memberDetails == null) {
+            return null;
+        }
+        
+        final List<FieldMetadata> locatedFields = locateFields(javaType,
+                new String[0], memberDetails,
+                metadataIdentificationString);
+        return new CopyMetadata(metadataIdentificationString, aspectName, governorPhysicalTypeMetadata, locatedFields);
     }
     
     /**
@@ -70,5 +92,46 @@ public final class CopyMetadataProvider extends AbstractItdMetadataProvider {
 
     public String getProvidesType() {
         return CopyMetadata.getMetadataIdentiferType();
+    }
+    
+	private List<FieldMetadata> locateFields(final JavaType javaType,
+            final String[] excludeFields, final MemberDetails memberDetails,
+            final String metadataIdentificationString) {
+        final SortedSet<FieldMetadata> locatedFields = new TreeSet<FieldMetadata>(
+                new Comparator<FieldMetadata>() {
+                    public int compare(final FieldMetadata l,
+                            final FieldMetadata r) {
+                        return l.getFieldName().compareTo(r.getFieldName());
+                    }
+                });
+
+        final List<?> excludeFieldsList = CollectionUtils
+                .arrayToList(excludeFields);
+        final FieldMetadata versionField = persistenceMemberLocator
+                .getVersionField(javaType);
+
+        for (final FieldMetadata field : memberDetails.getFields()) {
+            if (excludeFieldsList
+                    .contains(field.getFieldName().getSymbolName())) {
+                continue;
+            }
+            if (Modifier.isStatic(field.getModifier())
+                    || Modifier.isTransient(field.getModifier())
+                    || field.getFieldType().isCommonCollectionType()
+                    || field.getFieldType().isArray()) {
+                continue;
+            }
+            if (versionField != null
+                    && field.getFieldName().equals(versionField.getFieldName())) {
+                continue;
+            }
+
+            locatedFields.add(field);
+            metadataDependencyRegistry.registerDependency(
+                    field.getDeclaredByMetadataId(),
+                    metadataIdentificationString);
+        }
+
+        return new ArrayList<FieldMetadata>(locatedFields);
     }
 }

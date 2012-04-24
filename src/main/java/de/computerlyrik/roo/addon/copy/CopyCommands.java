@@ -52,7 +52,8 @@ public class CopyCommands implements CommandMarker { // All command types must i
     @CliCommand(value = "copy", help = "Add a copy method for this class")
     public void add(
     		@CliOption(key = "type", mandatory = true, help = "The java type to apply this annotation to") JavaType target,
-    		@CliOption(key = "excludeFields", mandatory = false, specifiedDefaultValue = "", optionContext = "exclude-fields", help = "The fields to exclude in copy method. Multiple field names must be a double-quoted list separated by spaces") final Set<String> excludeFields) { 
+    		@CliOption(key = "excludeFields", mandatory = false, specifiedDefaultValue = "", optionContext = "exclude-fields", help = "The fields to exclude in copy method. Multiple field names must be a double-quoted list separated by spaces") final Set<String> excludeFields) {
+    	operations.setup();
         operations.annotateType(target, excludeFields);
     }
     

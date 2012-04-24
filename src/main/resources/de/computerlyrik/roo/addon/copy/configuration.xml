@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
 	<batch>
+	<repositories>
+		<repository>
+	            <id>computerlyrik-roo-copy-releases</id>
+	            <url>https://github.com/w4ldmeister/roo-copy/raw/master/repo/releases</url>
+		</repository>
+    </repositories>
 		<dependencies>
-			<!-- Ivy-style dependency definition -->
-			<dependency org="org.springframework.batch" name="spring-batch-core" rev="2.1.1.RELEASE" />
-			
 			<!-- Maven-style dependency definition (should be used if exclusions need to be defined) -->
 			<dependency>
-				<groupId>org.springframework.batch</groupId>
-				<artifactId>spring-batch-admin-manager</artifactId>
-				 <version>1.0.0.RELEASE</version>
+				<groupId>de.computerlyrik.roo.addon.copy</groupId>
+				<artifactId>copy</artifactId>
+				 <version>0</version>
 			</dependency>
 		</dependencies>
 	</batch>

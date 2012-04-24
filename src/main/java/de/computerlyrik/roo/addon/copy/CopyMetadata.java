@@ -37,14 +37,13 @@ import org.springframework.roo.support.util.CollectionUtils;
  */
 public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
 	
-    @Reference private TypeLocationService typeLocationService;
 
     // Constants
     private static final String PROVIDES_TYPE_STRING = CopyMetadata.class.getName();
     private static final String PROVIDES_TYPE = MetadataIdentificationUtils.create(PROVIDES_TYPE_STRING);
 
     private final List<FieldMetadata> locatedFields;
-    
+
     public static final String getMetadataIdentiferType() {
         return PROVIDES_TYPE;
     }
@@ -67,7 +66,7 @@ public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
     
     public CopyMetadata(String identifier, JavaType aspectName, PhysicalTypeMetadata governorPhysicalTypeMetadata,  final List<FieldMetadata> locatedFields) {
         super(identifier, aspectName, governorPhysicalTypeMetadata);
-        
+                
         this.locatedFields = locatedFields;
         Validate.isTrue(isValid(identifier), "Metadata identification string '" + identifier + "' does not appear to be a valid");
             
@@ -118,30 +117,39 @@ public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
         	String getter = "get"+field.getFieldName().getSymbolNameCapitalisedFirstLetter();
         	String setter = "set"+field.getFieldName().getSymbolNameCapitalisedFirstLetter();
         	JavaType fieldType = field.getFieldType();
-        	ClassOrInterfaceTypeDetails citd;
+        	//ClassOrInterfaceTypeDetails citd;
         	if (fieldType.isCommonCollectionType())
         	{
         		JavaType collectionType = fieldType.getParameters().get(0);
         		System.out.println("got List with generic type:"+collectionType.toString());
-        		citd = typeLocationService.getTypeDetails(collectionType);
-        	    if (collectionType.isPrimitive()
-        	    		||citd != null 
-        	    		&& MemberFindingUtils.getAnnotationOfType(citd.getAnnotations(), new JavaType(RooCopy.class.getName())) != null)
-        		{
-        			bodyBuilder.appendFormalLine("for ( "+collectionType+" t : "+fieldName+" ) {");
-        			bodyBuilder.appendFormalLine("p."+getter+".add(t.copy());");
-        			bodyBuilder.appendFormalLine("}");
-        		} 
+        		//citd = typeLocationService.getTypeDetails(fieldType);
+        		
+    			bodyBuilder.appendFormalLine("for ( "+collectionType+" t : "+fieldName+" ) {");
+
+        	    if (collectionType.isPrimitive())
+        			bodyBuilder.appendFormalLine("p."+getter+".add("+field.getFieldName()+")");
+        	    else if(MemberFindingUtils.getAnnotationOfType(field.getAnnotations(), new JavaType(RooCopy.class.getName())) != null)
+        			bodyBuilder.appendFormalLine("p."+getter+".add("+field.getFieldName()+".copy())");
+        	    else
+        			bodyBuilder.appendFormalLine("p."+getter+".add("+field.getFieldName()+")");
+    			
+        	    bodyBuilder.appendFormalLine("}");
+
         	}
-        	else 
-        	{
-        		citd = typeLocationService.getTypeDetails(fieldType);
-        	    if (fieldType.isPrimitive() 
-        	    		|| citd != null 
-        	    		&& MemberFindingUtils.getAnnotationOfType(citd.getAnnotations(), new JavaType(RooCopy.class.getName())) != null)
-        	    {
+        	else if (fieldType.isPrimitive()) {
+    	    	bodyBuilder.appendFormalLine("p."+setter+"(this."+getter+"());");
+        	}
+        	//TODO:
+        	//This would happen, if class is some reference to another complex class
+        	//If this class contains a copy method, it will be used
+        	//Otherwise, only reference will be set! Use excludeFields, if you do not want them in your copy!
+        	else {
+        		//citd = typeLocationService.getTypeDetails(fieldType);
+        	    if (MemberFindingUtils.getAnnotationOfType(field.getAnnotations(), new JavaType(RooCopy.class.getName())) != null)
+    	    		bodyBuilder.appendFormalLine("p."+setter+"(this."+getter+"().copy());");
+        	    else 
         	    	bodyBuilder.appendFormalLine("p."+setter+"(this."+getter+"());");
-        	    }
+
         	}
         }
     	bodyBuilder.appendFormalLine("return p;");

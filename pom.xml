@@ -11,8 +11,8 @@
     </organization>
     <licenses>
         <license>
-            <name>&gt;GNU General Public License (GPL), Version 3.0</name>
-            <url>http://www.gnu.org/copyleft/gpl.html</url>
+            <name>Proprietary</name>
+            <url>http://nowhere.to.go</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -23,6 +23,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <google.code.project.name>${project.name}</google.code.project.name>
         <repo.folder>de/computerlyrik/roo/addon/copy</repo.folder>
+        <altDeploymentRepository>release-repo::default::file:repo/releases</altDeploymentRepository>
+
     </properties>
     <repositories>
         <repository>

@@ -102,8 +102,8 @@ public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
         		governorTypeDetails.getType()));
         // Define method parameter names (none in this case)
         List<JavaSymbolName> parameterNames = new ArrayList<JavaSymbolName>();
-        parameterNames.add(new JavaSymbolName(
-        		governorTypeDetails.getName().getSimpleTypeName().toLowerCase()));
+        //parameterNames.add(new JavaSymbolName(
+        //		governorTypeDetails.getName().getSimpleTypeName().toLowerCase()));
         
         // Create the method body
         InvocableMemberBodyBuilder bodyBuilder = new InvocableMemberBodyBuilder();

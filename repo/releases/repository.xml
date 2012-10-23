@@ -1,4 +1,4 @@
-<repository lastmodified='20120424110253.001'>
+<repository lastmodified='20121023112255.167'>
   <resource id='de.computerlyrik.roo.addon.copy/0.0.0' symbolicname='de.computerlyrik.roo.addon.copy' presentationname='addon-copy' uri='httppgp://addon-copy.googlecode.com/svn/repo/de/computerlyrik/roo/addon/copy/de.computerlyrik.roo.addon.copy/0/de.computerlyrik.roo.addon.copy-0.jar' version='0.0.0'>
     <description>An add-on created by Spring Roo&apos;s addon creator feature.</description>
     <size>18374</size>
@@ -8,6 +8,38 @@
       <p n='symbolicname' v='de.computerlyrik.roo.addon.copy'/>
       <p n='presentationname' v='addon-copy'/>
       <p n='version' t='version' v='0.0.0'/>
+      <p n='manifestversion' v='2'/>
+    </capability>
+    <capability name='package'>
+      <p n='package' v='de.computerlyrik.roo.addon.copy'/>
+      <p n='version' t='version' v='0.0.0'/>
+      <p n='uses:' v='org.springframework.roo.model,org.springframework.roo.shell,org.springframework.roo.classpath.itd,org.springframework.roo.classpath.details.annotations,org.springframework.roo.project,org.springframework.roo.metadata,org.springframework.roo.classpath,org.apache.commons.lang3,org.springframework.roo.classpath.details,org.apache.commons.lang3.builder,org.springframework.roo.support.util,org.springframework.roo.classpath.scanner,org.osgi.service.component,org.springframework.roo.classpath.persistence,org.w3c.dom'/>
+    </capability>
+    <require name='package' filter='(&amp;(package=org.apache.commons.lang3)(version&gt;=3.1.0)(!(version&gt;=4.0.0)))' extend='false' multiple='false' optional='false'>Import package org.apache.commons.lang3;version="[3.1,4)"</require>
+    <require name='package' filter='(&amp;(package=org.apache.commons.lang3.builder)(version&gt;=3.1.0)(!(version&gt;=4.0.0)))' extend='false' multiple='false' optional='false'>Import package org.apache.commons.lang3.builder;version="[3.1,4)"</require>
+    <require name='package' filter='(&amp;(package=org.osgi.service.component)(version&gt;=1.1.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.osgi.service.component;version="[1.1,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.classpath)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.classpath;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.classpath.details)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.classpath.details;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.classpath.details.annotations)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.classpath.details.annotations;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.classpath.itd)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.classpath.itd;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.classpath.persistence)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.classpath.persistence;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.classpath.scanner)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.classpath.scanner;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.metadata)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.metadata;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.model)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.model;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.project)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.project;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.shell)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.shell;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.springframework.roo.support.util)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.springframework.roo.support.util;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.w3c.dom))' extend='false' multiple='false' optional='false'>Import package org.w3c.dom</require>
+  </resource>
+  <resource id='de.computerlyrik.roo.addon.copy/0.1.0' symbolicname='de.computerlyrik.roo.addon.copy' presentationname='addon-copy' uri='httppgp://addon-copy.googlecode.com/svn/repo/de/computerlyrik/roo/addon/copy/de.computerlyrik.roo.addon.copy/0.1/de.computerlyrik.roo.addon.copy-0.1.jar' version='0.1.0'>
+    <description>An add-on created by Spring Roo&apos;s addon creator feature.</description>
+    <size>18380</size>
+    <documentation>http://www.some.company</documentation>
+    <license>http://nowhere.to.go</license>
+    <capability name='bundle'>
+      <p n='symbolicname' v='de.computerlyrik.roo.addon.copy'/>
+      <p n='presentationname' v='addon-copy'/>
+      <p n='version' t='version' v='0.1.0'/>
       <p n='manifestversion' v='2'/>
     </capability>
     <capability name='package'>

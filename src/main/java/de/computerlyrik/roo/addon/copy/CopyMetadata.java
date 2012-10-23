@@ -98,8 +98,8 @@ public class CopyMetadata extends AbstractItdTypeDetailsProvidingMetadataItem {
         
         // Define method parameter types (none in this case)
         List<AnnotatedJavaType> parameterTypes = new ArrayList<AnnotatedJavaType>();
-        parameterTypes.add(new AnnotatedJavaType(
-        		governorTypeDetails.getType()));
+        //parameterTypes.add(new AnnotatedJavaType(
+        //		governorTypeDetails.getType()));
         // Define method parameter names (none in this case)
         List<JavaSymbolName> parameterNames = new ArrayList<JavaSymbolName>();
         //parameterNames.add(new JavaSymbolName(
